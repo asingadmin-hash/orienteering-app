@@ -4,6 +4,55 @@ import './CheckpointManager.css';
 export default function CheckpointManager({ checkpoints, setCheckpoints, onClose }) {
   const [editingId, setEditingId] = useState(null);
   const [editForm, setEditForm] = useState(null);
+  const [importMode, setImportMode] = useState(false);
+  const [importText, setImportText] = useState('');
+
+  const handleExport = () => {
+    const exportData = checkpoints.map(cp => ({
+      name: cp.name,
+      lat: cp.lat,
+      lng: cp.lng,
+      type: cp.type,
+      story: cp.story,
+      quiz: cp.quiz,
+      answer: cp.answer,
+      hints: cp.hints
+    }));
+    const jsonStr = JSON.stringify(exportData, null, 2);
+    navigator.clipboard.writeText(jsonStr).then(() => {
+      alert('劇本已複製到剪貼簿！');
+    }).catch(() => {
+      alert('複製失敗，您可能需要在有 HTTPS 的環境下才能使用剪貼簿功能。');
+    });
+  };
+
+  const handleImport = () => {
+    try {
+      const parsed = JSON.parse(importText);
+      if (!Array.isArray(parsed)) throw new Error("必須是陣列格式");
+      
+      const newCheckpoints = parsed.map((cp, idx) => ({
+        id: Date.now() + idx,
+        name: cp.name || `點位 ${idx+1}`,
+        lat: parseFloat(cp.lat) || 25.0339,
+        lng: parseFloat(cp.lng) || 121.5644,
+        type: cp.type === 'final' ? 'final' : 'normal',
+        story: cp.story || '',
+        quiz: cp.quiz || '',
+        answer: cp.answer || '',
+        hints: Array.isArray(cp.hints) ? cp.hints : []
+      }));
+
+      if(window.confirm(`即將匯入 ${newCheckpoints.length} 個點位並覆蓋目前的設定，確定嗎？`)) {
+        setCheckpoints(newCheckpoints);
+        setImportMode(false);
+        setImportText('');
+        alert('劇本匯入成功！');
+      }
+    } catch (e) {
+      alert('JSON 格式錯誤，請檢查您的劇本格式！\n' + e.message);
+    }
+  };
 
   const handleEdit = (cp) => {
     setEditingId(cp.id);
@@ -130,10 +179,32 @@ export default function CheckpointManager({ checkpoints, setCheckpoints, onClose
         ))}
       </div>
       
-      {!editingId && (
-        <button className="btn-primary full-width mt-15" onClick={handleAddNewCheckpoint}>
-          + 手動新增點位
-        </button>
+      {!editingId && !importMode && (
+        <div style={{ marginTop: '15px' }}>
+          <button className="btn-primary full-width" onClick={handleAddNewCheckpoint}>
+            + 手動新增點位
+          </button>
+          <div style={{ display: 'flex', gap: '10px', marginTop: '10px' }}>
+            <button className="btn-secondary full-width" onClick={handleExport}>📥 匯出</button>
+            <button className="btn-secondary full-width" onClick={() => setImportMode(true)}>📤 匯入</button>
+          </div>
+        </div>
+      )}
+
+      {importMode && (
+        <div className="checkpoint-edit-form" style={{ marginTop: '15px' }}>
+          <label>貼上 JSON 劇本</label>
+          <textarea 
+            value={importText} 
+            onChange={e => setImportText(e.target.value)} 
+            placeholder="[ { &quot;name&quot;: &quot;第一關&quot;, ... } ]"
+            style={{ minHeight: '150px' }}
+          />
+          <div className="form-actions mt-10">
+            <button className="btn-primary" onClick={handleImport}>確認匯入</button>
+            <button className="btn-secondary" onClick={() => setImportMode(false)}>取消</button>
+          </div>
+        </div>
       )}
     </div>
   );
