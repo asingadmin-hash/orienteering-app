@@ -115,7 +115,7 @@ function App() {
     if (passwordInput === 'VIP') {
       setAppState('admin');
     } else if (validPasswords.includes(passwordInput)) {
-      setAppState('intro');
+      setAppState('play');
     } else {
       alert('密碼錯誤，請確認後再試！');
     }
@@ -227,28 +227,30 @@ function App() {
 
   if (appState === 'login') {
     return (
-      <div className="login-screen">
-        <div className="login-card">
-          <h2>🗺️ 城市尋寶：冒險者加入</h2>
-          <p>請輸入探險隊密碼以開始尋寶</p>
-          <input type="password" placeholder="密碼" value={passwordInput} onChange={(e) => setPasswordInput(e.target.value)} />
-          <button onClick={handleLogin}>開始探險</button>
-        </div>
-      </div>
-    );
-  }
-
-  if (appState === 'intro') {
-    return (
-      <div className="intro-screen">
-        <div className="intro-card">
-          <h2>🗺️ {gameInfo.title}</h2>
-          <div className="story-content">
+      <div className="login-screen" style={{ overflowY: 'auto', padding: '20px', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+        <div className="login-card" style={{ maxWidth: '600px', width: '100%', padding: '30px', background: 'rgba(255, 255, 255, 0.95)', borderRadius: '10px', boxShadow: '0 10px 30px rgba(0,0,0,0.5)', textAlign: 'center' }}>
+          <h2 style={{ color: '#8b4513', marginBottom: '20px', fontSize: '2rem', marginTop: 0 }}>🗺️ {gameInfo.title}</h2>
+          
+          <div className="story-content" style={{ fontSize: '1.1rem', lineHeight: '1.6', color: '#333', textAlign: 'left', marginBottom: '30px', whiteSpace: 'pre-wrap', maxHeight: '40vh', overflowY: 'auto', paddingRight: '10px' }}>
             {gameInfo.backgroundStory}
           </div>
-          <button onClick={() => setAppState('play')} style={{ padding: '12px 24px', fontSize: '1.2rem', background: '#e67e22', color: 'white', border: 'none', borderRadius: '5px', cursor: 'pointer', fontWeight: 'bold' }}>
-            開始冒險！
-          </button>
+
+          <div style={{ borderTop: '2px dashed #ccc', paddingTop: '20px' }}>
+            <p style={{ fontWeight: 'bold', color: '#555', marginBottom: '10px' }}>請輸入探險隊密碼以開始尋寶</p>
+            <input 
+              type="password" 
+              placeholder="密碼" 
+              value={passwordInput} 
+              onChange={(e) => setPasswordInput(e.target.value)} 
+              style={{ width: '100%', padding: '12px', marginBottom: '15px', boxSizing: 'border-box', fontSize: '1.1rem', borderRadius: '5px', border: '1px solid #ccc', textAlign: 'center' }} 
+            />
+            <button 
+              onClick={handleLogin} 
+              style={{ width: '100%', padding: '12px', background: '#e67e22', color: 'white', border: 'none', borderRadius: '5px', fontSize: '1.2rem', cursor: 'pointer', fontWeight: 'bold' }}
+            >
+              開始探險
+            </button>
+          </div>
         </div>
       </div>
     );
