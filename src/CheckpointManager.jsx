@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import './CheckpointManager.css';
 
-export default function CheckpointManager({ checkpoints, setCheckpoints }) {
+export default function CheckpointManager({ checkpoints, setCheckpoints, onClose }) {
   const [editingId, setEditingId] = useState(null);
   const [editForm, setEditForm] = useState(null);
 
@@ -60,7 +60,10 @@ export default function CheckpointManager({ checkpoints, setCheckpoints }) {
 
   return (
     <div className="checkpoint-manager-panel">
-      <h3>📍 點位管理清單</h3>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '2px dashed #8b4513', paddingBottom: '10px', marginBottom: '10px' }}>
+        <h3 style={{ margin: 0, border: 'none', padding: 0 }}>📍 點位管理清單</h3>
+        <button onClick={onClose} style={{ background: 'none', border: 'none', fontSize: '1.5rem', cursor: 'pointer', color: '#8b4513' }}>&times;</button>
+      </div>
       
       <div className="checkpoint-list">
         {checkpoints.map((cp, index) => (

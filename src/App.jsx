@@ -68,6 +68,7 @@ function App() {
     return saved ? JSON.parse(saved) : ['1234', 'VIP'];
   });
   const [newPass, setNewPass] = useState('');
+  const [isListOpen, setIsListOpen] = useState(false);
 
   const [checkpoints, setCheckpoints] = useState(() => {
     const saved = localStorage.getItem('gameCheckpoints');
@@ -235,10 +236,19 @@ function App() {
       </header>
 
       <main className="map-wrapper">
-        {appState === 'admin' && (
+        {appState === 'admin' && !isListOpen && (
+          <button 
+            onClick={() => setIsListOpen(true)}
+            style={{ position: 'absolute', top: '10px', left: '10px', zIndex: 1000, padding: '10px', background: '#8b4513', color: 'white', border: 'none', borderRadius: '5px', cursor: 'pointer', boxShadow: '0 2px 5px rgba(0,0,0,0.3)', fontWeight: 'bold' }}
+          >
+            📋 管理點位清單
+          </button>
+        )}
+        {appState === 'admin' && isListOpen && (
           <CheckpointManager 
             checkpoints={checkpoints} 
             setCheckpoints={setCheckpoints} 
+            onClose={() => setIsListOpen(false)}
           />
         )}
         <MapViewer 
@@ -254,11 +264,13 @@ function App() {
               id: Date.now(),
               name: `新傳說 ${checkpoints.length + 1}`,
               lat: latlng.lat, lng: latlng.lng,
+              type: 'normal',
               story: '在此處寫下你的故事...',
               quiz: '在這裡設定你的謎題。',
               answer: '123', hints: ['這是提示。']
             };
             setCheckpoints([...checkpoints, newCP]);
+            setIsListOpen(true);
           }}
           onDeleteCheckpoint={(id) => {
             if (window.confirm('確定要刪除這個點位嗎？')) {
