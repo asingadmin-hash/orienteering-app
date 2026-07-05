@@ -69,6 +69,7 @@ function App() {
   });
   const [newPass, setNewPass] = useState('');
   const [isListOpen, setIsListOpen] = useState(false);
+  const [isPasswordPanelOpen, setIsPasswordPanelOpen] = useState(false);
 
   const [checkpoints, setCheckpoints] = useState(() => {
     const saved = localStorage.getItem('gameCheckpoints');
@@ -341,8 +342,21 @@ function App() {
         )}
 
         {appState === 'admin' && (
-          <div className="admin-password-panel">
-            <h4>🔑 冒險密碼管理</h4>
+          <>
+            {!isPasswordPanelOpen && (
+              <button 
+                onClick={() => setIsPasswordPanelOpen(true)}
+                style={{ position: 'absolute', top: '10px', right: '20px', zIndex: 1000, padding: '10px', background: 'white', color: '#8b4513', border: '2px solid #8b4513', borderRadius: '5px', cursor: 'pointer', boxShadow: '0 2px 5px rgba(0,0,0,0.3)', fontWeight: 'bold' }}
+              >
+                🔑 密碼管理
+              </button>
+            )}
+            {isPasswordPanelOpen && (
+              <div className="admin-password-panel">
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px' }}>
+                  <h4 style={{ margin: 0 }}>🔑 冒險密碼管理</h4>
+                  <button onClick={() => setIsPasswordPanelOpen(false)} style={{ background: 'none', border: 'none', fontSize: '1.5rem', cursor: 'pointer', color: '#8b4513' }}>&times;</button>
+                </div>
             {validPasswords.map(p => (
               <div key={p} className="password-item">
                 <span>{p}</span>
@@ -354,6 +368,8 @@ function App() {
               <button onClick={addPassword}>+</button>
             </div>
           </div>
+          )}
+          </>
         )}
       </main>
 

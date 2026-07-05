@@ -31,9 +31,13 @@ function MapClickHandler({ onMapClick, isAdmin }) {
     return null;
 }
 
+import { useEffect } from 'react';
+
 function ChangeView({ center }) {
     const map = useMap();
-    if (center) map.setView(center, map.getZoom());
+    useEffect(() => {
+        if (center) map.setView([center.lat, center.lng], map.getZoom());
+    }, [center, map]);
     return null;
 }
 
@@ -49,17 +53,21 @@ const MapViewer = ({
     onDeleteCheckpoint 
 }) => {
     const defaultCenter = [25.0339, 121.5644];
+    const [viewTrigger, setViewTrigger] = React.useState(null);
+    const targetCp = checkpoints[nextCheckpointIndex];
 
     return (
-        <MapContainer 
-            center={defaultCenter} 
-            zoom={15} 
-            style={{ height: '100%', width: '100%' }}
-        >
-            <TileLayer
-                attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-            />
+        <div style={{ position: 'relative', width: '100%', height: '100%' }}>
+            <MapContainer 
+                center={defaultCenter} 
+                zoom={15} 
+                style={{ height: '100%', width: '100%' }}
+            >
+                <ChangeView center={viewTrigger} />
+                <TileLayer
+                    attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                    url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                />
             
             <MapClickHandler isAdmin={isAdmin} onMapClick={onAddCheckpoint} />
             
@@ -73,7 +81,6 @@ const MapViewer = ({
                         <Popup>您的位置</Popup>
                     </Marker>
                     <Circle center={[userLocation.lat, userLocation.lng]} radius={30} pathOptions={{ color: 'blue', fillOpacity: 0.1 }} />
-                    <ChangeView center={[userLocation.lat, userLocation.lng]} />
                 </>
             )}
 
@@ -132,6 +139,26 @@ const MapViewer = ({
                 );
             })}
         </MapContainer>
+        
+        <div style={{ position: 'absolute', bottom: '20px', left: '20px', zIndex: 1000, display: 'flex', flexDirection: 'column', gap: '10px' }}>
+            {targetCp && (
+                <button 
+                    onClick={() => setViewTrigger({ lat: targetCp.lat, lng: targetCp.lng, t: Date.now() })} 
+                    style={{ padding: '10px 15px', background: 'white', border: '2px solid #8b4513', borderRadius: '50px', cursor: 'pointer', fontWeight: 'bold', boxShadow: '0 4px 6px rgba(0,0,0,0.3)', color: '#8b4513' }}
+                >
+                    🎯 回到目標點位
+                </button>
+            )}
+            {userLocation && (
+                <button 
+                    onClick={() => setViewTrigger({ lat: userLocation.lat, lng: userLocation.lng, t: Date.now() })} 
+                    style={{ padding: '10px 15px', background: '#2196f3', border: 'none', borderRadius: '50px', cursor: 'pointer', fontWeight: 'bold', boxShadow: '0 4px 6px rgba(0,0,0,0.3)', color: 'white' }}
+                >
+                    📍 定位我的位置
+                </button>
+            )}
+        </div>
+      </div>
     );
 };
 
