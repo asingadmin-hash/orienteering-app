@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import MapViewer from './MapViewer';
 import './App.css';
+import CheckpointManager from './CheckpointManager';
 
 // 城市尋寶風格的檢查點數據
 const INITIAL_CHECKPOINTS = [
@@ -68,7 +69,14 @@ function App() {
   });
   const [newPass, setNewPass] = useState('');
 
-  const [checkpoints, setCheckpoints] = useState(INITIAL_CHECKPOINTS);
+  const [checkpoints, setCheckpoints] = useState(() => {
+    const saved = localStorage.getItem('gameCheckpoints');
+    return saved ? JSON.parse(saved) : INITIAL_CHECKPOINTS;
+  });
+
+  useEffect(() => {
+    localStorage.setItem('gameCheckpoints', JSON.stringify(checkpoints));
+  }, [checkpoints]);
   const [userLocation, setUserLocation] = useState(null);
   const [userPath, setUserPath] = useState([]);
   const [foundCheckpoints, setFoundCheckpoints] = useState([]); 
@@ -227,6 +235,12 @@ function App() {
       </header>
 
       <main className="map-wrapper">
+        {appState === 'admin' && (
+          <CheckpointManager 
+            checkpoints={checkpoints} 
+            setCheckpoints={setCheckpoints} 
+          />
+        )}
         <MapViewer 
           checkpoints={checkpoints.filter((cp, idx) => cp.type !== 'final' || idx === nextCheckpointIndex)} 
           userLocation={userLocation}

@@ -1,0 +1,160 @@
+.checkpoint-manager-panel {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 350px;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.95);
+  box-shadow: 2px 0 15px rgba(0,0,0,0.2);
+  z-index: 1500;
+  padding: 20px;
+  box-sizing: border-box;
+  overflow-y: auto;
+  border-right: 5px solid #8b4513;
+  display: flex;
+  flex-direction: column;
+}
+
+.checkpoint-manager-panel h3 {
+  margin-top: 0;
+  color: #8b4513;
+  border-bottom: 2px dashed #8b4513;
+  padding-bottom: 10px;
+}
+
+.checkpoint-list {
+  flex: 1;
+  overflow-y: auto;
+}
+
+.checkpoint-item {
+  background: #fdf5e6;
+  border: 1px solid #d2b48c;
+  margin-bottom: 10px;
+  border-radius: 5px;
+  overflow: hidden;
+}
+
+.checkpoint-summary {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+}
+
+.checkpoint-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.cp-type {
+  font-size: 0.8rem;
+  color: #555;
+  margin-top: 4px;
+}
+
+.checkpoint-actions {
+  display: flex;
+  gap: 5px;
+}
+
+.checkpoint-edit-form {
+  padding: 15px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.checkpoint-edit-form label {
+  font-weight: bold;
+  font-size: 0.9rem;
+  color: #5d4037;
+  margin-top: 5px;
+}
+
+.checkpoint-edit-form input,
+.checkpoint-edit-form select,
+.checkpoint-edit-form textarea {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+  font-family: inherit;
+}
+
+.checkpoint-edit-form textarea {
+  resize: vertical;
+  min-height: 60px;
+}
+
+.form-row {
+  display: flex;
+  gap: 10px;
+}
+
+.form-row > div {
+  flex: 1;
+}
+
+.hint-edit-row {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin-bottom: 5px;
+}
+
+.form-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.btn-primary {
+  background: #8b4513;
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  flex: 1;
+}
+
+.btn-secondary {
+  background: #e0e0e0;
+  color: #333;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.btn-danger {
+  background: #d32f2f;
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.btn-icon {
+  padding: 5px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.small {
+  padding: 4px 8px;
+  font-size: 0.8rem;
+}
+
+.full-width {
+  width: 100%;
+  padding: 12px;
+  font-size: 1rem;
+}
+
+.mt-5 { margin-top: 5px; }
+.mt-10 { margin-top: 10px; }
+.mt-15 { margin-top: 15px; }
