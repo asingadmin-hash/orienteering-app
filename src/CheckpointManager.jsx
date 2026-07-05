@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import './CheckpointManager.css';
 
-export default function CheckpointManager({ checkpoints, setCheckpoints, gameInfo, setGameInfo, onClose }) {
+export default function CheckpointManager({ checkpoints, setCheckpoints, gameInfo, setGameInfo, onClose, onLocate }) {
   const [editingId, setEditingId] = useState(null);
   const [editForm, setEditForm] = useState(null);
   const [importMode, setImportMode] = useState(false);
@@ -216,7 +216,8 @@ export default function CheckpointManager({ checkpoints, setCheckpoints, gameInf
                   <span className="cp-type">{cp.type === 'final' ? '👑 終點' : '📍 一般'}</span>
                 </div>
                 <div className="checkpoint-actions">
-                  <button className="btn-secondary small" onClick={() => handleEdit(cp)}>✏️ 編輯</button>
+                  <button className="btn-secondary small" onClick={() => onLocate && onLocate(cp.lat, cp.lng)}>🎯</button>
+                  <button className="btn-secondary small" onClick={() => handleEdit(cp)}>✏️</button>
                   <button className="btn-danger small" onClick={() => handleDelete(cp.id)}>🗑️</button>
                 </div>
               </div>

@@ -70,6 +70,7 @@ function App() {
   const [newPass, setNewPass] = useState('');
   const [isListOpen, setIsListOpen] = useState(false);
   const [isPasswordPanelOpen, setIsPasswordPanelOpen] = useState(false);
+  const [mapViewTrigger, setMapViewTrigger] = useState(null);
 
   const [gameInfo, setGameInfo] = useState(() => {
     const saved = localStorage.getItem('gameInfoData');
@@ -285,6 +286,7 @@ function App() {
             gameInfo={gameInfo}
             setGameInfo={setGameInfo}
             onClose={() => setIsListOpen(false)}
+            onLocate={(lat, lng) => setMapViewTrigger({ lat, lng, t: Date.now() })}
           />
         )}
         <MapViewer 
@@ -295,6 +297,8 @@ function App() {
           userPath={userPath}
           teammateLocation={teammateLocation}
           isAdmin={appState === 'admin'}
+          viewTrigger={mapViewTrigger}
+          setViewTrigger={setMapViewTrigger}
           onAddCheckpoint={(latlng) => {
             const newCP = {
               id: Date.now(),

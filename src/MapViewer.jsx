@@ -50,10 +50,11 @@ const MapViewer = ({
     teammateLocation,
     isAdmin,
     onAddCheckpoint,
-    onDeleteCheckpoint 
+    onDeleteCheckpoint,
+    viewTrigger,
+    setViewTrigger
 }) => {
     const defaultCenter = [25.0339, 121.5644];
-    const [viewTrigger, setViewTrigger] = React.useState(null);
     const targetCp = checkpoints[nextCheckpointIndex];
 
     return (
