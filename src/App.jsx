@@ -246,6 +246,17 @@ function App() {
             };
             setCheckpoints([...checkpoints, newCP]);
           }}
+          onDeleteCheckpoint={(id) => {
+            if (window.confirm('確定要刪除這個點位嗎？')) {
+               const indexToDelete = checkpoints.findIndex(cp => cp.id === id);
+               if (indexToDelete < nextCheckpointIndex) {
+                   setNextCheckpointIndex(prev => Math.max(0, prev - 1));
+               } else if (indexToDelete === nextCheckpointIndex && nextCheckpointIndex >= checkpoints.length - 1) {
+                   setNextCheckpointIndex(prev => Math.max(0, prev - 1));
+               }
+               setCheckpoints(checkpoints.filter(cp => cp.id !== id));
+            }
+          }}
         />
 
         {/* 尋寶任務彈窗 (城市尋寶風格) */}

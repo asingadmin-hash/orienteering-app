@@ -45,7 +45,8 @@ const MapViewer = ({
     userPath, 
     teammateLocation,
     isAdmin,
-    onAddCheckpoint 
+    onAddCheckpoint,
+    onDeleteCheckpoint 
 }) => {
     const defaultCenter = [25.0339, 121.5644];
 
@@ -111,6 +112,19 @@ const MapViewer = ({
                                 <div style={{ marginTop: '10px' }}>
                                     <strong>佐證照片：</strong><br/>
                                     <img src={foundData.photoUrl} alt="佐證" style={{ width: '100%', borderRadius: '5px', marginTop: '5px' }} />
+                                </div>
+                            )}
+                            {isAdmin && (
+                                <div style={{ marginTop: '10px', textAlign: 'center' }}>
+                                    <button 
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            onDeleteCheckpoint(cp.id);
+                                        }}
+                                        style={{ background: '#d32f2f', color: 'white', border: 'none', padding: '5px 10px', borderRadius: '3px', cursor: 'pointer', width: '100%' }}
+                                    >
+                                        🗑️ 刪除此點位
+                                    </button>
                                 </div>
                             )}
                         </Popup>
