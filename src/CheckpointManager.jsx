@@ -1,23 +1,29 @@
 import React, { useState } from 'react';
 import './CheckpointManager.css';
 
-export default function CheckpointManager({ checkpoints, setCheckpoints, onClose }) {
+export default function CheckpointManager({ checkpoints, setCheckpoints, gameInfo, setGameInfo, onClose }) {
   const [editingId, setEditingId] = useState(null);
   const [editForm, setEditForm] = useState(null);
   const [importMode, setImportMode] = useState(false);
   const [importText, setImportText] = useState('');
 
   const handleExport = () => {
-    const exportData = checkpoints.map(cp => ({
-      name: cp.name,
-      lat: cp.lat,
-      lng: cp.lng,
-      type: cp.type,
-      story: cp.story,
-      quiz: cp.quiz,
-      answer: cp.answer,
-      hints: cp.hints
-    }));
+    const exportData = {
+      gameInfo: {
+        title: gameInfo.title,
+        backgroundStory: gameInfo.backgroundStory
+      },
+      checkpoints: checkpoints.map(cp => ({
+        name: cp.name,
+        lat: cp.lat,
+        lng: cp.lng,
+        type: cp.type,
+        story: cp.story,
+        quiz: cp.quiz,
+        answer: cp.answer,
+        hints: cp.hints
+      }))
+    };
     const jsonStr = JSON.stringify(exportData, null, 2);
     navigator.clipboard.writeText(jsonStr).then(() => {
       alert('劇本已複製到剪貼簿！');
@@ -29,9 +35,21 @@ export default function CheckpointManager({ checkpoints, setCheckpoints, onClose
   const handleImport = () => {
     try {
       const parsed = JSON.parse(importText);
-      if (!Array.isArray(parsed)) throw new Error("必須是陣列格式");
+      let newCheckpoints = [];
+      let newGameInfo = null;
+
+      if (Array.isArray(parsed)) {
+        // Old format (just an array of checkpoints)
+        newCheckpoints = parsed;
+      } else if (parsed && parsed.checkpoints && Array.isArray(parsed.checkpoints)) {
+        // New format (object with gameInfo and checkpoints)
+        newCheckpoints = parsed.checkpoints;
+        if (parsed.gameInfo) newGameInfo = parsed.gameInfo;
+      } else {
+        throw new Error("格式不正確 (需為陣列或包含 checkpoints 的物件)");
+      }
       
-      const newCheckpoints = parsed.map((cp, idx) => ({
+      const mappedCheckpoints = newCheckpoints.map((cp, idx) => ({
         id: Date.now() + idx,
         name: cp.name || `點位 ${idx+1}`,
         lat: parseFloat(cp.lat) || 25.0339,
@@ -43,8 +61,15 @@ export default function CheckpointManager({ checkpoints, setCheckpoints, onClose
         hints: Array.isArray(cp.hints) ? cp.hints : []
       }));
 
-      if(window.confirm(`即將匯入 ${newCheckpoints.length} 個點位並覆蓋目前的設定，確定嗎？`)) {
-        setCheckpoints(newCheckpoints);
+      if(window.confirm(`即將匯入 ${mappedCheckpoints.length} 個點位並覆蓋目前的設定，確定嗎？`)) {
+        setCheckpoints(mappedCheckpoints);
+        if (newGameInfo && setGameInfo) {
+          setGameInfo(prev => ({
+            ...prev,
+            title: newGameInfo.title || prev.title,
+            backgroundStory: newGameInfo.backgroundStory || prev.backgroundStory
+          }));
+        }
         setImportMode(false);
         setImportText('');
         alert('劇本匯入成功！');
@@ -113,6 +138,27 @@ export default function CheckpointManager({ checkpoints, setCheckpoints, onClose
         <h3 style={{ margin: 0, border: 'none', padding: 0 }}>📍 點位管理清單</h3>
         <button onClick={onClose} style={{ background: 'none', border: 'none', fontSize: '1.5rem', cursor: 'pointer', color: '#8b4513' }}>&times;</button>
       </div>
+
+      {!editingId && !importMode && gameInfo && (
+        <div style={{ marginBottom: '20px', padding: '10px', background: '#f5f5f5', borderRadius: '5px', border: '1px solid #ddd' }}>
+          <h4 style={{ margin: '0 0 10px 0', color: '#555' }}>📖 遊戲背景設定</h4>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+            <input 
+              type="text" 
+              value={gameInfo.title} 
+              onChange={e => setGameInfo({...gameInfo, title: e.target.value})} 
+              placeholder="遊戲標題"
+              style={{ padding: '8px', border: '1px solid #ccc', borderRadius: '4px' }}
+            />
+            <textarea 
+              value={gameInfo.backgroundStory} 
+              onChange={e => setGameInfo({...gameInfo, backgroundStory: e.target.value})} 
+              placeholder="前導背景故事..."
+              style={{ padding: '8px', border: '1px solid #ccc', borderRadius: '4px', minHeight: '80px', resize: 'vertical' }}
+            />
+          </div>
+        </div>
+      )}
       
       <div className="checkpoint-list">
         {checkpoints.map((cp, index) => (

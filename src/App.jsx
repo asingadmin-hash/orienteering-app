@@ -71,6 +71,18 @@ function App() {
   const [isListOpen, setIsListOpen] = useState(false);
   const [isPasswordPanelOpen, setIsPasswordPanelOpen] = useState(false);
 
+  const [gameInfo, setGameInfo] = useState(() => {
+    const saved = localStorage.getItem('gameInfoData');
+    return saved ? JSON.parse(saved) : {
+      title: "城市尋寶：失落的記憶",
+      backgroundStory: "歡迎來到這個未知的城市，傳說這裡隱藏著失落的寶藏。\n\n你和你的隊伍將根據一系列的線索，解開隱藏在城市各個角落的謎題，最終找到那份被遺忘的記憶。\n\n準備好開始這場冒險了嗎？"
+    };
+  });
+
+  useEffect(() => {
+    localStorage.setItem('gameInfoData', JSON.stringify(gameInfo));
+  }, [gameInfo]);
+
   const [checkpoints, setCheckpoints] = useState(() => {
     const saved = localStorage.getItem('gameCheckpoints');
     return saved ? JSON.parse(saved) : INITIAL_CHECKPOINTS;
@@ -99,8 +111,13 @@ function App() {
   }, [validPasswords]);
 
   const handleLogin = () => {
-    if (validPasswords.includes(passwordInput)) setAppState('play');
-    else alert('密碼錯誤！');
+    if (passwordInput === 'VIP') {
+      setAppState('admin');
+    } else if (validPasswords.includes(passwordInput)) {
+      setAppState('intro');
+    } else {
+      alert('密碼錯誤，請確認後再試！');
+    }
   };
 
   const addPassword = () => {
@@ -220,11 +237,27 @@ function App() {
     );
   }
 
+  if (appState === 'intro') {
+    return (
+      <div className="intro-screen">
+        <div className="intro-card">
+          <h2>🗺️ {gameInfo.title}</h2>
+          <div className="story-content">
+            {gameInfo.backgroundStory}
+          </div>
+          <button onClick={() => setAppState('play')} style={{ padding: '12px 24px', fontSize: '1.2rem', background: '#e67e22', color: 'white', border: 'none', borderRadius: '5px', cursor: 'pointer', fontWeight: 'bold' }}>
+            開始冒險！
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className={`app-container ${appState === 'admin' ? 'admin-mode' : ''}`}>
       <header className="app-header">
         <div className="header-main">
-          <h1>城市尋寶：失落的記憶</h1>
+          <h1>{gameInfo.title}</h1>
           <button className="mode-toggle" onClick={() => setAppState(appState === 'play' ? 'admin' : 'play')}>
             {appState === 'play' ? '管理模式' : '返回冒險'}
           </button>
@@ -248,7 +281,9 @@ function App() {
         {appState === 'admin' && isListOpen && (
           <CheckpointManager 
             checkpoints={checkpoints} 
-            setCheckpoints={setCheckpoints} 
+            setCheckpoints={setCheckpoints}
+            gameInfo={gameInfo}
+            setGameInfo={setGameInfo}
             onClose={() => setIsListOpen(false)}
           />
         )}
