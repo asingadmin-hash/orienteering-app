@@ -337,6 +337,17 @@ function App() {
               </div>
               
               <div className="journal-content">
+                {activeTask.data.imageUrl && (
+                  <div style={{ marginBottom: '15px', textAlign: 'center' }}>
+                    <img 
+                      src={activeTask.data.imageUrl} 
+                      alt={activeTask.data.name} 
+                      style={{ maxWidth: '100%', maxHeight: '200px', borderRadius: '8px', objectFit: 'cover' }} 
+                      onError={(e) => e.target.style.display = 'none'}
+                    />
+                  </div>
+                )}
+                
                 {activeTask.stage === 'story' ? (
                   <div className="story-phase">
                     <p className="story-text">{activeTask.data.story}</p>

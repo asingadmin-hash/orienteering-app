@@ -21,7 +21,8 @@ export default function CheckpointManager({ checkpoints, setCheckpoints, gameInf
         story: cp.story,
         quiz: cp.quiz,
         answer: cp.answer,
-        hints: cp.hints
+        hints: cp.hints,
+        imageUrl: cp.imageUrl || ''
       }))
     };
     const jsonStr = JSON.stringify(exportData, null, 2);
@@ -58,7 +59,8 @@ export default function CheckpointManager({ checkpoints, setCheckpoints, gameInf
         story: cp.story || '',
         quiz: cp.quiz || '',
         answer: cp.answer || '',
-        hints: Array.isArray(cp.hints) ? cp.hints : []
+        hints: Array.isArray(cp.hints) ? cp.hints : [],
+        imageUrl: cp.imageUrl || ''
       }));
 
       if(window.confirm(`即將匯入 ${mappedCheckpoints.length} 個點位並覆蓋目前的設定，確定嗎？`)) {
@@ -184,6 +186,9 @@ export default function CheckpointManager({ checkpoints, setCheckpoints, gameInf
                   <option value="normal">一般點位</option>
                   <option value="final">終極寶藏</option>
                 </select>
+
+                <label>🖼️ 關卡圖片網址 (Image URL)</label>
+                <input value={editForm.imageUrl || ''} placeholder="https://..." onChange={e => setEditForm({...editForm, imageUrl: e.target.value})} />
 
                 <label>劇情提要 (Story)</label>
                 <textarea value={editForm.story} onChange={e => setEditForm({...editForm, story: e.target.value})} />
